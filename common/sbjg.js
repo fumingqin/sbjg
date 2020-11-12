@@ -71,6 +71,20 @@ const SbjgInterface = {
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},
+	//--------------------------------------根据设备ID获取单个设备--------------------------------------
+	GetmachineBy:{
+		Url: Url2 + '/Home/GetmachineBy',
+		name:'单个设备',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//--------------------------------------根据设备ID获取断线详情--------------------------------------
+	GetOfflineByID:{
+		Url: Url2 + '/Home/GetOfflineByID',
+		name:'断线详情',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
 }
 // 接口声明区
 export default {

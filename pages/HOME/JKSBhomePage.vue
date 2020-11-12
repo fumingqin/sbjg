@@ -5,7 +5,7 @@
 			<view class="hp_outerLayer">
 				<!-- 选择车站 -->
 				<view class="if_DriverNumber">
-					<picker @change="godetail" :value="index" :range="selectBank" range-key="StationName">
+					<picker @change="godetail" :value="index" :range="selectBank" range-key="Memo">
 						<text class="tsnrText">{{bankObject}}</text>
 					</picker>
 					<text class="dn_text2" style="margin-top: 8upx;">></text>
@@ -19,7 +19,7 @@
 					<text class="et_text">设备类型</text>
 
 					<!-- 凭单机 -->
-					<view class="et_typeContent"  hover-class="hover" v-for="(item,index) in DeviceData" :key="index" @tap="checkAttention(item.name)">
+					<view class="et_typeContent" hover-class="hover" v-for="(item,index) in DeviceData" :key="index" @tap="checkAttention(item.name)">
 						<view>
 							<view class="tc_image">
 								<image class="tc_image2" v-if="item.name=='检票口班次信息屏'" src="../../static/HOME/bancixinxiping.png" mode="aspectFit"></image>
@@ -28,6 +28,7 @@
 								<image class="tc_image2" v-if="item.name=='售票机'" src="../../static/HOME/shoupiaoji.png" mode="aspectFit"></image>
 								<image class="tc_image2" v-if="item.name=='检票机'" src="../../static/HOME/jianpiaoji.png" mode="aspectFit"></image>
 								<image class="tc_image2" v-if="item.name=='凭单机'" src="../../static/HOME/pindanji.png" mode="aspectFit"></image>
+								<image class="tc_image2" v-if="item.name=='进出口道闸'" src="../../static/HOME/daozha.png" mode="aspectFit"></image>
 							</view>
 						</view>
 
@@ -40,6 +41,7 @@
 								<text class="ct_number animated flash" v-if="item.name=='售票机'">{{item.num}}台</text>
 								<text class="ct_number animated flash" v-if="item.name=='检票机'">{{item.num}}台</text>
 								<text class="ct_number animated flash" v-if="item.name=='凭单机'">{{item.num}}台</text>
+								<text class="ct_number animated flash" v-if="item.name=='进出口道闸'">{{item.num}}台</text>
 								<text class="ct_text">查看设备></text>
 							</view>
 						</view>
@@ -61,19 +63,24 @@
 						<!-- <view class="tt_txt">{{item.txt}}</view> -->
 						<view class="tt_equipmentContent" hover-class="hover" @click="Jump(item)">
 							<view class="ec_image">
-								<image class="ec_image2" v-if="popUpModule == 5" src="../../static/HOME/bancixinxiping.png" mode="aspectFit"></image>
-								<image class="ec_image2" v-if="popUpModule == 4" src="../../static/HOME/fachewei.png" mode="aspectFit"></image>
-								<image class="ec_image2" v-if="popUpModule == 3" src="../../static/HOME/baobanji.png" mode="aspectFit"></image>
-								<image class="ec_image2" v-if="popUpModule == 2" src="../../static/HOME/pindanji.png" mode="aspectFit"></image>
-								<image class="ec_image2" v-if="popUpModule == 1" src="../../static/HOME/shoupiaoji.png" mode="aspectFit"></image>
-								<image class="ec_image2" v-if="popUpModule == 0" src="../../static/HOME/jianpiaoji.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 8" src="../../static/HOME/bancixinxiping.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 7" src="../../static/HOME/fachewei.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 6" src="../../static/HOME/daozha.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 5" src="../../static/HOME/baobanji.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 4" src="../../static/HOME/pindanji.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 2" src="../../static/HOME/shoupiaoji.png" mode="aspectFit"></image>
+								<image class="ec_image2" v-if="popUpModule == 3" src="../../static/HOME/jianpiaoji.png" mode="aspectFit"></image>
 							</view>
 							<view class="ec_content">
-								<view class="ct_title">{{item.Code}}</view>
+								<view class="ct_title">{{item.Device.CustomName}}</view>
 								<view class="ct_content">
-									<text class="ct_number">{{item.BreakNum}}次掉线</text>
-									<text class="ct_state" style="color: #3CB96B;" v-if="item.Online==true">在线</text>
-									<text class="ct_state" style="color: #FF4444;" v-if="item.Online==false">离线</text>
+									<text class="ct_number">{{item.breaktimes}}次掉线</text>
+									<text class="ct_state" style="color: #000000;" v-if="item.Device.State== 0">未定义</text>
+									<text class="ct_state" style="color: #3CB96B;" v-if="item.Device.State== 1">在线</text>
+									<text class="ct_state" style="color: #55ffff;" v-if="item.Device.State== 2">疑似离线</text>
+									<text class="ct_state" style="color: #ffff00;" v-if="item.Device.State== 3">短时离线</text>
+									<text class="ct_state" style="color: #ff0000;" v-if="item.Device.State== 4">长时离线</text>
+									<text class="ct_state" style="color: #3CB96B;" v-if="item.Device.State== 5">下班关机</text>
 									<text class="ct_text">查看设备></text>
 								</view>
 							</view>
@@ -120,9 +127,12 @@
 		},
 		data() {
 			return {
+				stationlistnum: 0,
 				type: 0,
 				selectBank: [{
 					AID: '',
+					CompanyCode: '',
+					Memo: '',
 					CompanyID: '',
 					StationID: '',
 					StationName: '',
@@ -161,20 +171,23 @@
 				DeviceData: [{
 					"name": "检票机",
 					"num": 0
-				},{
+				}, {
 					"name": "售票机",
 					"num": 0
-				},{
+				}, {
 					"name": "凭单机",
 					"num": 0
-				},{
+				}, {
 					"name": "报班机",
 					"num": 0
-				},{
+				}, {
 					"name": "发车位显示屏",
 					"num": 0
-				},{
+				}, {
 					"name": "检票口班次信息屏",
+					"num": 0
+				}, {
+					"name": "进出口道闸",
 					"num": 0
 				}], //设备分类
 				standAlone: [], //设备列表
@@ -185,6 +198,7 @@
 		},
 		onLoad: function() {
 			this.interfaceData();
+			console.log($Sbjg.SbjgInterface.GetStarte.Url);
 		},
 
 		onShow: function() {
@@ -206,17 +220,17 @@
 					success: (res) => {
 						console.log('获取所有的车站', res)
 						this.selectBank = res.data;
-						var a = uni.getStorageSync('stationName')
-						if(a == ''){
-							that.bankObject = res.data[0].StationName;
+						var a = uni.getStorageSync('Memo')
+						if (a == '') {
+							that.bankObject = res.data[0].Memo;
 							uni.setStorage({
-								key:'stationName',
-								data: res.data[0].StationName
+								key: 'Memo',
+								data: res.data[0].Memo
 							})
-						}else{
+						} else {
 							that.bankObject = a;
 						}
-						
+
 						this.deviceData();
 					}
 				})
@@ -231,10 +245,10 @@
 					method: $Sbjg.SbjgInterface.GetNumAll.method,
 					header: $Sbjg.SbjgInterface.GetNumAll.header,
 					data: {
-						CompanyName: this.bankObject,
+						LocationID: this.selectBank[this.stationlistnum].AID,
 					},
 					success: (res) => {
-						console.log('获取所有的设备数据', res)
+						console.log('获取所有的设备数据成功', res)
 						this.DeviceData = res.data;
 						uni.hideLoading()
 						this.totalEquipment();
@@ -249,28 +263,31 @@
 					title: '请求设备列表中...',
 				})
 				uni.request({
+
 					url: $Sbjg.SbjgInterface.GetSerialsByID.Url,
 					method: $Sbjg.SbjgInterface.GetSerialsByID.method,
 					header: $Sbjg.SbjgInterface.GetSerialsByID.header,
 					data: {
-						CompanyName: this.bankObject,
+						CompanyName: this.selectBank[this.stationlistnum].AID,
 						type: this.popUpModule,
 					},
 					success: (res) => {
-						console.log('获取所有的设备数据', res)
+						
 						this.standAlone = res.data;
 						uni.hideLoading()
+						console.log('获取所有的设备数据', this.standAlone)
 					}
 				})
 			},
 			//----------------------选择车站--------------------------------------
 			godetail: function(e) {
-				// console.log(e)
+				console.log(e)
 				this.index = e.detail.value;
-				this.bankObject = this.selectBank[e.detail.value].StationName;
+				this.bankObject = this.selectBank[e.detail.value].Memo;
+				this.stationlistnum = e.detail.value;
 				uni.setStorage({
-					key:'stationName',
-					data: this.selectBank[e.detail.value].StationName
+					key: 'Memo',
+					data: this.selectBank[e.detail.value].Memo
 				})
 				this.deviceData()
 				// console.log('1', this.bankObject)
@@ -280,32 +297,37 @@
 			checkAttention: function(e) {
 				if (e == '凭单机') {
 					this.popUpModule = '';
-					this.popUpModule = 2;
+					this.popUpModule = 4;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				} else if (e == '检票机') {
 					this.popUpModule = '';
-					this.popUpModule = 0;
+					this.popUpModule = 3;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				} else if (e == '售票机') {
 					this.popUpModule = '';
-					this.popUpModule = 1;
+					this.popUpModule = 2;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				} else if (e == '报班机') {
 					this.popUpModule = '';
-					this.popUpModule = 3;
+					this.popUpModule = 5;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				} else if (e == '发车位显示屏') {
 					this.popUpModule = '';
-					this.popUpModule = 4;
+					this.popUpModule = 7;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				} else if (e == '检票口班次信息屏') {
 					this.popUpModule = '';
-					this.popUpModule = 5;
+					this.popUpModule = 8;
+					this.getDeviceList();
+					this.$refs.popup.open()
+				} else if (e == '进出口道闸') {
+					this.popUpModule = '';
+					this.popUpModule = 6;
 					this.getDeviceList();
 					this.$refs.popup.open()
 				}
@@ -314,7 +336,7 @@
 			close() {
 				this.$refs.popup.close()
 			},
-
+			
 			//-------------------------------跳转---------------------------------
 			Jump(item) {
 				uni.setStorage({
@@ -377,18 +399,20 @@
 
 			//设备参数变更
 			EquipmentName: function(e) {
-				if (e == 0) {
+				if (e == 3) {
 					return '检票机'
-				} else if (e == 1) {
-					return '售票机'
 				} else if (e == 2) {
-					return '凭单机'
-				} else if (e == 3) {
-					return '报班机'
+					return '售票机'
 				} else if (e == 4) {
-					return '发车位显示屏'
+					return '凭单机'
 				} else if (e == 5) {
+					return '报班机'
+				} else if (e == 7) {
+					return '发车位显示屏'
+				} else if (e == 8) {
 					return '检票口班次信息屏'
+				} else if (e == 6) {
+					return '进出口道闸'
 				}
 			},
 
@@ -735,8 +759,8 @@
 			}
 		}
 	}
-	
-	.hover{
+
+	.hover {
 		transition: all .3s; //过度
 		border-radius: 12upx;
 		opacity: 0.1;

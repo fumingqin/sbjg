@@ -14,23 +14,29 @@
 
 			<view class="ol_equipmentStatus">
 				<text class="es_text animated">设备状态</text>
-				<text class="es_text2" v-if="parameter.Online==true">硬件在线</text>
-				<text class="es_text3 animated flash" v-if="parameter.Online==false">硬件异常</text>
-				<text class="es_text2" v-if="parameter.Online==true">软件在线</text>
-				<text class="es_text3 animated flash" v-if="parameter.Online==false">软件异常</text>
+				<text class="es_text2" v-if="parameter.State==0">硬件状态未定义</text>
+				<text class="es_text2" v-if="parameter.State==1">硬件在线</text>
+				<text class="es_text2" v-if="parameter.State==2">硬件疑似离线</text>
+				<text class="es_text2" v-if="parameter.State==5">硬件下班关机</text>
+				<text class="es_text3 animated flash" v-if="parameter.State==3 ||parameter.State==4">硬件异常</text>
+				<text class="es_text2" v-if="parameter.State==0">软件状态未定义</text>
+				<text class="es_text2" v-if="parameter.State==1">软件在线</text>
+				<text class="es_text2" v-if="parameter.State==2">软件疑似离线</text>
+				<text class="es_text2" v-if="parameter.State==5">软件下班关机</text>
+				<text class="es_text3 animated flash" v-if="parameter.State ==3||parameter.State ==4">软件异常</text>
 			</view>
 
 			<view class="ol_networkStatus">
 				<text class="ns_text">网络状态</text>
 				<!-- <text class="ns_text2" v-if="parameter.Online==true">外网正常</text>
 				<text class="ns_text3" v-if="parameter.Online==false">外网异常</text> -->
-				<text class="ns_text2" v-if="parameter.Online==true">内网正常</text>
-				<text class="ns_text3 animated flash" v-if="parameter.Online==false">内网异常</text>
+				<text class="ns_text2" >{{DeviceState[parameter.State].state}}</text>
+				<!-- <text class="ns_text3 animated flash" v-if="parameter.Online==false">内网异常</text> -->
 			</view>
 
 			<view class="ol_ticketSalesAmount" v-if="parameter.Type == 0 || parameter.Type == 1 || parameter.Type == 2">
-				<text class="tsa_text" v-if="parameter.Online==true">{{emptyTicketReset(ticketSum)}}/{{emptyTicketReset(moneySum)}}</text>
-				<text class="tsa_text animated flash" v-if="parameter.Online==false">---/---</text>
+				<text class="tsa_text">{{emptyTicketReset(ticketSum)}}/{{emptyTicketReset(moneySum)}}</text>
+				<!-- <text class="tsa_text animated flash" >---/---</text> -->
 				<view style="display: flex;">
 					<image class="tsa_icon" src="../static/shoupiao.png" mode="aspectFit"></image>
 					<text class="tsa_text2" v-if="parameter.Type == 2">开单数/金额</text>
@@ -44,15 +50,15 @@
 				<text class="tsa_text animated flash" v-if="parameter.Online==false">---</text>
 				<view style="display: flex;">
 					<image class="tsa_icon" src="../static/shoupiao.png" mode="aspectFit"></image>
-					<text class="tsa_text2" v-if="parameter.Type == 5">班次数</text>
+					<text class="tsa_text2" v-if="parameter.Type == 3">班次数</text>
 					<text class="tsa_text2" style="margin-left: 4upx;" v-if="parameter.Type == 4">发车数</text>
-					<text class="tsa_text2" v-if="parameter.Type == 3">报班数</text>
+					<text class="tsa_text2" v-if="parameter.Type == 5">报班数</text>
 				</view>
 			</view>
 
 			<view class="ol_cpuConsumption">
-				<text class="cc_text" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text>
-				<text class="cc_text animated flash" v-if="parameter.Online==false">---</text>
+				<!-- <text class="cc_text" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text> -->
+				<text class="cc_text animated flash">---</text>
 				<view style="display: flex;">
 					<image class="cc_icon" src="../static/neicun.png" mode="aspectFit"></image>
 					<text class="cc_text2">可用内存</text>
@@ -60,8 +66,8 @@
 			</view>
 
 			<view class="ol_cpuTemperature">
-				<text class="ct_text" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text>
-				<text class="ct_text animated flash" v-if="parameter.Online==false">---</text>
+				<!-- <text class="ct_text" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text> -->
+				<text class="ct_text animated flash">---</text>
 				<view style="display: flex;">
 					<image class="ct_icon" style="" src="../static/cpu.png" mode="aspectFit"></image>
 					<text class="ct_text2">CPU占用率</text>
@@ -91,19 +97,19 @@
 
 			<!-- 按钮 -->
 			<view>
-				<view class="ol_shutDown" hover-class="ol_hover" @click="equipmentShutDown">
+				<view class="ol_shutDown" hover-class="ol_hover" @click="notYetOpen()">
 					<image class="sd_icon" style="width: 30upx;" src="../static/guanji.png" mode="aspectFit"></image>
 					<text class="sd_text">设备关机</text>
 				</view>
-				<view class="ol_shutDown" hover-class="ol_hover" @click="equipmentRestart">
+				<view class="ol_shutDown" hover-class="ol_hover" @click="notYetOpen()">
 					<image class="sd_icon" style="width: 36upx;" src="../static/chongqi.png" mode="aspectFit"></image>
 					<text class="sd_text">设备重启</text>
 				</view>
-				<view class="ol_shutDown" hover-class="ol_hover" @click="checkAttention(2)">
+				<view class="ol_shutDown" hover-class="ol_hover" @click="notYetOpen()">
 					<image class="sd_icon" style="width: 30upx;" src="../static/zijian.png" mode="aspectFit"></image>
 					<text class="sd_text">查看进程</text>
 				</view>
-				<view class="ol_shutDown" hover-class="ol_hover" style="margin-bottom: 56upx;" @click="guarantee">
+				<view class="ol_shutDown" hover-class="ol_hover" style="margin-bottom: 56upx;" @click="notYetOpen()">
 					<image class="sd_icon" style="width: 30upx;" src="../static/dengji.png" mode="aspectFit"></image>
 					<text class="sd_text">保修登记</text>
 				</view>
@@ -163,23 +169,23 @@
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">设备状态</text>
-							<text class="ct_text2" style="color: #3CB96B;" v-if="parameter.Online==true">在线</text>
-							<text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">离线</text>
+							<text class="ct_text2" style="color: #3CB96B;" >{{DeviceState[parameter.State].state}}</text>
+							<!-- <text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">离线</text> -->
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">网络状态</text>
-							<text class="ct_text2" style="color: #3CB96B;" v-if="parameter.Online==true">正常</text>
-							<text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">异常</text>
+							<text class="ct_text2" style="color: #3CB96B;" >{{DeviceState[parameter.State].state}}</text>
+							<!-- <text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">异常</text> -->
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">CPU占用率</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<!-- <text class="ct_text2" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text> -->
+							<text class="ct_text2 animated flash">--</text>
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">可用内存</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<!-- <text class="ct_text2" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text> -->
+							<text class="ct_text2 animated flash">--</text>
 						</view>
 					</view>
 				</scroll-view>
@@ -230,6 +236,19 @@
 						data: [],
 					}]
 				},
+				DeviceState: [{
+					"state": "未定义",
+				},{
+					"state": "在线"
+				},{
+					"state": "疑似离线"
+				},{
+					"state": "短时离线"
+				},{
+					"state": "长时离线"
+				},{
+					"state": "下班关机"
+				}],
 				lineData2: {
 					//数字的图--折线图数据
 					categories: [],
@@ -268,22 +287,21 @@
 			RequestDeviceParameters: function() {
 				var that = this;
 				var data = uni.getStorageSync('equipmentParameters')
-				console.log(data)
 				uni.request({
-					url: $Sbjg.SbjgInterface.GetSettingByID.Url,
-					method: $Sbjg.SbjgInterface.GetSettingByID.method,
-					header: $Sbjg.SbjgInterface.GetSettingByID.header,
+					url: $Sbjg.SbjgInterface.GetmachineBy.Url,
+					method: $Sbjg.SbjgInterface.GetmachineBy.method,
+					header: $Sbjg.SbjgInterface.GetmachineBy.header,
 					data: {
-						AID: data.AID,
+						AID: data.Device.AID,
 					},
 					success: (res) => {
 						console.log('设备参数', res)
 						this.parameter = '';
-						this.parameter = res.data;
+						this.parameter = res.data[0];
 						this.titleData();
 						that.lineData2.categories = []; //清空X轴数据
 						this.lineData2.series = []; //清空Y轴数据
-
+						console.log(that.parameter.AID);
 						//请求设备售出的票数接口
 						uni.request({
 							url: $Sbjg.SbjgInterface.GetBySettingAID.Url,
@@ -304,19 +322,21 @@
 										name: '',
 										data: [],
 									}
-									if (that.parameter.Type == 0) {
+
+									if (that.parameter.Type == 3) {
 										ticketSales.name = '检票数';
-									} else if (that.parameter.Type == 1) {
-										ticketSales.name = '售票数';
 									} else if (that.parameter.Type == 2) {
+										ticketSales.name = '售票数';
+									} else if (that.parameter.Type == 4) {
 										ticketSales.name = '开单数';
-									} else if (that.parameter.Type == 3) {
+									} else if (that.parameter.Type == 5) {
 										ticketSales.name = '报班数';
 									}
 
+
 									for (var i = 0; i < res.data.length; i++) {
 										//重组时段
-										var a = res.data[i].Time.slice(11);
+										var a = res.data[i].Hour;
 										that.lineData2.categories.push(a + '时')
 										// console.log(that.lineData2.categories) 
 
@@ -347,83 +367,83 @@
 								})
 							}
 						})
-						
-						setTimeout(function(){
-							//请求cpu占用率和剩余内存
-							uni.request({
-								url: $Sbjg.SbjgInterface.GetAllCpu.Url,
-								method: $Sbjg.SbjgInterface.GetAllCpu.method,
-								header: $Sbjg.SbjgInterface.GetAllCpu.header,
-								data: {
-									AID: that.parameter.AID,
-									// AID: '2020-08-17-46621d8a-4e64-4b78-bb05-ae24a89342a9',
-								},
-								success: (res) => {
-									console.log('cpu内存', res)
-									that.cpuMemory = res.data;
-									that.cpuMemoryIndex = res.data.length;
-							
-							
-									//筛选数据，重组数组
-									if (res.data.length !== 0) {
-										that.cpuProportion = res.data[res.data.length-1].Score1; //获取数组最后一个为cpu占用率
-										that.freeMemory = res.data[res.data.length-1].Score3; //获取数组最后一个为剩余内存
-										
-										var cpuObject = {
-											name: 'cpu占用率',
-											data: [],
-										}
-										
-										if (that.sellTicketDataIndex !== 0) {
-											var a1 = that.lineData2.series[0].data.concat(that.lineData2.series[0].data);
-											var b2 = a1.sort((a, b) => b - a)
-											for (var i = 0; i < res.data.length; i++) {
-												//重组票数
-												// console.log(b2)
-												var e = res.data[i].Score1 * b2[0] / 100;
-												// console.log(e)
-												if( e == 0){
-													cpuObject.data.push(e2);
-												}else{
-													var e2 = e.toFixed(2);
-													cpuObject.data.push(e2);
-												}
-											}
-											that.lineData2.series.push(cpuObject)
-											//生成图形
-											that.$nextTick(() => {
-												that.$refs['lineData2'].showCharts();
-											});
-										} else {
-											for (var i = 0; i < res.data.length; i++) {
-												//重组时段
-												var a = res.data[i].Time;
-												that.lineData2.categories.push(a + '时')
-												// console.log(that.lineData2.categories) 
-							
-												//重组票数
-												var d = res.data[i].Score1;
-												var d2 = d.slice(0,6);
-												cpuObject.data.push(d2);
-											}
-											that.lineData2.series.push(cpuObject)
-											//生成图形
-											that.$nextTick(() => {
-												that.$refs['lineData2'].showCharts();
-											});
-										}
-									}
-									uni.hideLoading()
-								},
-								fail: () => {
-									uni.showToast({
-										title: '服务器异常，请重试，重试后不行请联系客服',
-										icon: 'none'
-									})
-								}
-							})
-						},1000)
-						
+
+						// setTimeout(function(){
+						// 	//请求cpu占用率和剩余内存
+						// 	uni.request({
+						// 		url: $Sbjg.SbjgInterface.GetAllCpu.Url,
+						// 		method: $Sbjg.SbjgInterface.GetAllCpu.method,
+						// 		header: $Sbjg.SbjgInterface.GetAllCpu.header,
+						// 		data: {
+						// 			AID: that.parameter.AID,
+						// 			// AID: '2020-08-17-46621d8a-4e64-4b78-bb05-ae24a89342a9',
+						// 		},
+						// 		success: (res) => {
+						// 			console.log('cpu内存', res)
+						// 			that.cpuMemory = res.data;
+						// 			that.cpuMemoryIndex = res.data.length;
+
+
+						// 			//筛选数据，重组数组
+						// 			if (res.data.length !== 0) {
+						// 				that.cpuProportion = res.data[res.data.length-1].Score1; //获取数组最后一个为cpu占用率
+						// 				that.freeMemory = res.data[res.data.length-1].Score3; //获取数组最后一个为剩余内存
+
+						// 				var cpuObject = {
+						// 					name: 'cpu占用率',
+						// 					data: [],
+						// 				}
+
+						// 				if (that.sellTicketDataIndex !== 0) {
+						// 					var a1 = that.lineData2.series[0].data.concat(that.lineData2.series[0].data);
+						// 					var b2 = a1.sort((a, b) => b - a)
+						// 					for (var i = 0; i < res.data.length; i++) {
+						// 						//重组票数
+						// 						// console.log(b2)
+						// 						var e = res.data[i].Score1 * b2[0] / 100;
+						// 						// console.log(e)
+						// 						if( e == 0){
+						// 							cpuObject.data.push(e2);
+						// 						}else{
+						// 							var e2 = e.toFixed(2);
+						// 							cpuObject.data.push(e2);
+						// 						}
+						// 					}
+						// 					that.lineData2.series.push(cpuObject)
+						// 					//生成图形
+						// 					that.$nextTick(() => {
+						// 						that.$refs['lineData2'].showCharts();
+						// 					});
+						// 				} else {
+						// 					for (var i = 0; i < res.data.length; i++) {
+						// 						//重组时段
+						// 						var a = res.data[i].Time;
+						// 						that.lineData2.categories.push(a + '时')
+						// 						// console.log(that.lineData2.categories) 
+
+						// 						//重组票数
+						// 						var d = res.data[i].Score1;
+						// 						var d2 = d.slice(0,6);
+						// 						cpuObject.data.push(d2);
+						// 					}
+						// 					that.lineData2.series.push(cpuObject)
+						// 					//生成图形
+						// 					that.$nextTick(() => {
+						// 						that.$refs['lineData2'].showCharts();
+						// 					});
+						// 				}
+						// 			}
+						// 			uni.hideLoading()
+						// 		},
+						// 		fail: () => {
+						// 			uni.showToast({
+						// 				title: '服务器异常，请重试，重试后不行请联系客服',
+						// 				icon: 'none'
+						// 			})
+						// 		}
+						// 	})
+						// },1000)
+
 
 					},
 					fail: () => {
@@ -440,7 +460,7 @@
 			//--------------------开头标题--------------------------
 			titleData: function() {
 				uni.setNavigationBarTitle({
-					title: this.parameter.Remark + '-' + this.parameter.Code
+					title: this.parameter.CustomName
 				})
 			},
 
@@ -567,10 +587,10 @@
 					icon: 'none'
 				})
 			},
-			
-			guarantee:function(){
+
+			guarantee: function() {
 				uni.navigateTo({
-					url:'./complaint?AID=' + this.parameter.AID + '&Remark=' + this.parameter.Remark + '&Code=' + this.parameter.Code
+					url: './complaint?AID=' + this.parameter.AID + '&Remark=' + this.parameter.Remark + '&Code=' + this.parameter.Code
 				})
 			},
 
