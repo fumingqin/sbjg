@@ -65,12 +65,12 @@ const SbjgInterface = {
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},
 	//--------------------------------------获取cpu占用率和剩余内存--------------------------------------
-	AddStateBy:{
-		Url: Url2 + '/Home/AddStateBy',
-		name:'保修接口',
-		method:'POST',
-		header:{'content-type':'application/x-www-form-urlencoded'},
-	},
+	// AddStateBy:{
+	// 	Url: Url2 + '/Home/AddStateBy',
+	// 	name:'保修接口',
+	// 	method:'POST',
+	// 	header:{'content-type':'application/x-www-form-urlencoded'},
+	// },
 	//--------------------------------------根据设备ID获取单个设备--------------------------------------
 	GetmachineBy:{
 		Url: Url2 + '/Home/GetmachineBy',
@@ -85,6 +85,37 @@ const SbjgInterface = {
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},
+	//---------------------------------------------获取所有公司----------------------------------------
+	GetCompany:{
+		Url: Url2 + '/Home/GetCompany',
+		name:'获取所有公司',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//---------------------------------------------根据ID获取地区----------------------------------------
+	GetLocation:{
+		Url: Url2 + '/Home/GetLocation',
+		name:'根据ID获取地区',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	
+	
+	//---------------------------------------------报修-------------------------------------------------
+	//---------------------------------------------上传报修清单----------------------------------------
+	AddStateBy:{
+		Url: Url2 + '/Repair/AddStateBy',
+		name:'上传报修清单',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//---------------------------------------------上传报修进度----------------------------------------
+	AddTaskLog:{
+		Url: Url2 + '/Repair/AddTaskLog',
+		name:'上传报修进度',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	}
 }
 // 接口声明区
 export default {

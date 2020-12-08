@@ -1,0 +1,48 @@
+{
+	"description": "项目配置文件。",
+	"packOptions": {
+		"ignore": []
+	},
+	"setting": {
+		"urlCheck": false,
+		"minified": true,
+		"postcss": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "",
+	"appid": "touristappid",
+	"projectname": "智慧龙洲",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"current": -1,
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": -1,
+					"name": "pages_SBJG/pages/complaintList",
+					"pathName": "pages_SBJG/pages/complaintList",
+					"scene": null
+				}
+			]
+		}
+	}
+}

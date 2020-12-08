@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "line-chart": "/components/stan-ucharts/LineChart",
+    "popup": "/components/uni-popup/uni-popup"
+  }
+}

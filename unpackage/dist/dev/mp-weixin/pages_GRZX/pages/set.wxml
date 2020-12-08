@@ -1,0 +1,1 @@
+<view class="container"><view class="itemClass" hover-class="btnClass" data-event-opts="{{[['tap',[['clearStorage',['$event']]]]]}}" bindtap="__e"><text>清除缓存</text><text class="sizeClass">{{currentSize}}</text><image class="rightClass" src="../../static/GRZX/icon-right.png"></image></view></view>

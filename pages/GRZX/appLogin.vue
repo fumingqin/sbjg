@@ -21,7 +21,7 @@
 		</view>
 
 		<!-- logo -->
-		<image :src="logo" class="logoClass"></image>
+		<image :src="logo||'/static/GRZX/logo.png'" class="logoClass"></image>
 
 		<!-- 第三方登录 -->
 		<view class="loginMode">第三方登录</view>
@@ -76,12 +76,12 @@
 			//----------------------------------加载图片----------------------------------
 			loadImg: function() {
 				var that = this;
-				that.$ChangeImage.GetImage("南平综合出行", "南平背景图").then(function(data) {
+				that.$ChangeImage.GetImage("设备管理", "登录背景图").then(function(data) {
 					that.background = data;
 				});
-				that.$ChangeImage.GetImage("南平综合出行", "nanpinglogo").then(function(data) {
-					that.logo = data;
-				});
+				// that.$ChangeImage.GetImage("南平综合出行", "nanpinglogo").then(function(data) {
+				// 	that.logo = data;
+				// });
 			},
 
 			//----------------------------------加载页面高度----------------------------------
@@ -199,6 +199,12 @@
 							title: "验证码已过期，请重新获取",
 							icon: "none"
 						})
+					}
+				})
+				uni.setStorage({
+					key:'phone',
+					data:{
+						phone:phone
 					}
 				})
 			},
@@ -711,8 +717,8 @@
 	}
 
 	.style{
-		border: 1px solid #FF971E;
-		color: #FF971E;
+		border: 1px solid #1D2087;
+		color: #1D2087;
 	}
 
 	.fontStyle {
@@ -726,6 +732,6 @@
 		width: 90%;
 		padding: 25upx 0;
 		border-radius: 20upx;
-		background: linear-gradient(54deg, rgba(255, 128, 8, 1) 0%, rgba(255, 200, 55, 1) 100%);
+		background:linear-gradient(270deg,rgba(94,109,255,1),rgba(73,152,251,1));
 	}
 </style>

@@ -72,6 +72,13 @@
 				}],
 				
 				functionList:[{ //联系客服，设置，帮助与反馈功能
+					title:'报修记录',
+					style:'serviceClass',
+					icon:'../../static/GRZX/icon-baoxiu.png',
+					IsUse:true,
+					rightClass:'rightClass ml1',
+				},
+				{ //联系客服，设置，帮助与反馈功能
 					title:'联系客服',
 					style:'serviceClass',
 					icon:'../../static/GRZX/icon-service.png',
@@ -174,6 +181,10 @@
 							url:'../../pages_GRZX/pages/feedback',
 						})
 						break;
+					case '报修记录':
+						uni.navigateTo({
+							url:'../../pages_SBJG/pages/complaintList',
+						})
 					default:
 						return '';
 				}
@@ -189,12 +200,13 @@
 							icon:'none'
 						})
 						// #ifdef APP-PLUS 
+						//#endif
 							setTimeout(function() {
 								uni.navigateTo({
 									url: '/pages/GRZX/appLogin',
 								})
 							}, 500);
-						//#endif
+						
 					}
 				})
 			},

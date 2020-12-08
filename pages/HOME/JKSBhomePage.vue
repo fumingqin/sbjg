@@ -2,20 +2,20 @@
 	<view>
 		<view class="hp_top">
 			<image class="top_image" src="../../static/HOME/beijin.png" mode="aspectFill"></image>
-			<view class="hp_outerLayer">
+			<view class="hp_outerLayer" >
 				<!-- 选择车站 -->
-				<view class="if_DriverNumber">
-					<picker @change="godetail" :value="index" :range="selectBank" range-key="Memo">
+				<view class="if_DriverNumber" @tap="SelectCompanyTap">
+					<!-- <picker @change="godetail" :value="index" :range="selectBank" range-key="Memo"> -->
 						<text class="tsnrText">{{bankObject}}</text>
-					</picker>
+					<!-- </picker> -->
 					<text class="dn_text2" style="margin-top: 8upx;">></text>
 				</view>
 
 				<!-- 多少台设备 -->
-				<text class="hp_equipment">{{equipment}}台设备</text>
+				<text class="hp_equipment" v-if="Islocation">{{equipment}}台设备</text>
 
 				<!-- 设备类型 -->
-				<view class="hp_equipmentType">
+				<view class="hp_equipmentType" v-if="Islocation">
 					<text class="et_text">设备类型</text>
 
 					<!-- 凭单机 -->
@@ -48,6 +48,9 @@
 					</view>
 
 				</view>
+			<view class="hp_equipmentType" v-if="!Islocation">
+				<text class="ct_text">请在左上角选择地区查看设备</text>
+			</view>
 			</view>
 		</view>
 
@@ -78,7 +81,7 @@
 									<text class="ct_state" style="color: #000000;" v-if="item.Device.State== 0">未定义</text>
 									<text class="ct_state" style="color: #3CB96B;" v-if="item.Device.State== 1">在线</text>
 									<text class="ct_state" style="color: #55ffff;" v-if="item.Device.State== 2">疑似离线</text>
-									<text class="ct_state" style="color: #ffff00;" v-if="item.Device.State== 3">短时离线</text>
+									<text class="ct_state" style="color: #ff00ff;" v-if="item.Device.State== 3">短时离线</text>
 									<text class="ct_state" style="color: #ff0000;" v-if="item.Device.State== 4">长时离线</text>
 									<text class="ct_state" style="color: #3CB96B;" v-if="item.Device.State== 5">下班关机</text>
 									<text class="ct_text">查看设备></text>
@@ -163,11 +166,14 @@
 						]
 					},
 				],
+				departure: '',
 				title: '今点通凭单机XKY23',
 				totalQuantity: 233,
 				equipmentNumber: 122,
 				index: 0,
 				bankObject: '',
+				Islocation:false,
+				location:[],
 				DeviceData: [{
 					"name": "检票机",
 					"num": 0
@@ -197,41 +203,93 @@
 			}
 		},
 		onLoad: function() {
-			this.interfaceData();
-			console.log($Sbjg.SbjgInterface.GetStarte.Url);
+			
+			this.location= uni.getStorageSync('Memo')
+			
+			
+			if(this.location)
+			{
+				// console.log(this.location)
+				this.Islocation=true;
+				this.interfaceData(this.location); 
+			}
+			else{
+				this.bankObject='请选择地区';
+			}
+			
+			// console.log($Sbjg.SbjgInterface.GetStarte.Url);
 		},
 
 		onShow: function() {
-			this.deviceData();
+			// this.deviceData();
 		},
 
 		methods: {
+			SelectCompanyTap(){
+				var that = this;
+				
+				//监听事件,监听下个页面返回的值
+				uni.$on('startstaionChange', function(data) {
+					
+					
+				    // data即为传过来的值，给上车点赋值
+					that.interfaceData(data.data);
+					
+				    //清除监听，不清除会消耗资源
+				    uni.$off('startstaionChange');
+				});
+				uni.navigateTo({
+					//跳转到下个页面
+					url:'homeSattionPick',
+					
+					fail:function(res){
+						console.log(res)
+					}
+				})
+				
+			},
 			//----------------------接口数据--------------------------------------
-			interfaceData: function() {
+			interfaceData: function(location) {
+				// console.log(location);
+				if(location)
+				{
+					this.Islocation=true;
+				}
+				else{
+					this.Islocation=false;
+				}
+				// console.log(location)
 				var that = this;
 				//获取所有的车站
+				
 				uni.showLoading({
 					title: '获取车站信息中...'
 				})
+				// console.log(location.AID)
 				uni.request({
 					url: $Sbjg.SbjgInterface.GetStarte.Url,
 					method: $Sbjg.SbjgInterface.GetStarte.method,
 					header: $Sbjg.SbjgInterface.GetStarte.header,
+					data: {
+						LocationAID: location.AID,
+					},
 					success: (res) => {
-						console.log('获取所有的车站', res)
+						console.log('获取指定车站', res)
 						this.selectBank = res.data;
-						var a = uni.getStorageSync('Memo')
-						if (a == '') {
+						uni.setStorage({
+							key: 'Memo',
+							data: res.data[0]
+						})
+						
+						
 							that.bankObject = res.data[0].Memo;
-							uni.setStorage({
-								key: 'Memo',
-								data: res.data[0].Memo
-							})
-						} else {
-							that.bankObject = a;
-						}
+						
 
 						this.deviceData();
+					},
+					fail:function(res){
+						uni.hideLoading()
+						console.log(res);
 					}
 				})
 				//获取所有的设备数据
@@ -245,7 +303,7 @@
 					method: $Sbjg.SbjgInterface.GetNumAll.method,
 					header: $Sbjg.SbjgInterface.GetNumAll.header,
 					data: {
-						LocationID: this.selectBank[this.stationlistnum].AID,
+						LocationID: this.selectBank[0].AID,
 					},
 					success: (res) => {
 						console.log('获取所有的设备数据成功', res)
@@ -268,7 +326,7 @@
 					method: $Sbjg.SbjgInterface.GetSerialsByID.method,
 					header: $Sbjg.SbjgInterface.GetSerialsByID.header,
 					data: {
-						CompanyName: this.selectBank[this.stationlistnum].AID,
+						CompanyName: this.selectBank[0].AID,
 						type: this.popUpModule,
 					},
 					success: (res) => {
@@ -376,7 +434,7 @@
 							title: '正在排序中...'
 						})
 						this.standAlone = [];
-						sc.sort((a, b) => b.Online - a.Online)
+						sc.sort((a, b) => b.Device.State - a.Device.State)
 						uni.hideLoading()
 					}
 				} else if (e == 3) {
@@ -389,7 +447,7 @@
 							title: '正在排序中...'
 						})
 						this.standAlone = [];
-						sc.sort((a, b) => b.BreakNum - a.BreakNum)
+						sc.sort((a, b) => b.breaktimes - a.breaktimes)
 						uni.hideLoading()
 					}
 				}

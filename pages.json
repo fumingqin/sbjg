@@ -6,7 +6,13 @@
 				"navigationStyle": "custom"
 			}
 		},
-		
+
+		{	//个人中心
+			"path": "pages/HOME/homeSattionPick",
+			"style": {
+				"navigationStyle": "custom"
+			}	
+		},
 		{	//个人中心
 			"path": "pages/GRZX/personalCenter",
 			"style": {
@@ -58,7 +64,11 @@
 					"path": "pages/complaint",
 					"style": {}
 				}
-			]
+                ,{
+                    "path" : "pages/complaintList",
+                    "style" : {}
+                }
+            ]
 		}
 	],
 	

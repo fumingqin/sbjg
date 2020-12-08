@@ -3,61 +3,63 @@
 		<image class="top_image" src="../../static/HOME/beijin2.png" mode="aspectFill"></image>
 		<view class="tp_outerLayer">
 			<view class="ol_image">
-				<image class="im_image" style="height: 58%;" v-if="parameter.Type == 5" src="../../static/HOME/bancixinxiping.png"
+				<image class="im_image" v-if="parameter.Device.Type == 4" src="../../static/HOME/pindanji.png" mode="aspectFit"></image>
+				<image class="im_image" v-if="parameter.Device.Type == 2" src="../../static/HOME/shoupiaoji.png" mode="aspectFit"></image>
+				<image class="im_image" style="height: 70%;" v-if="parameter.Device.Type == 3" src="../../static/HOME/jianpiaoji.png" mode="aspectFit"></image>
+				<image class="im_image" v-if="parameter.Device.Type == 5" src="../static/baobanji.png" mode="aspectFit"></image>
+				<image class="im_image" v-if="parameter.Device.Type == 6" src="../../static/HOME/daozha.png" mode="aspectFit"></image>
+				<image class="im_image" style="height: 58%;" v-if="parameter.Device.Type == 8" src="../../static/HOME/bancixinxiping.png"
 				 mode="aspectFit"></image>
-				<image class="im_image" style="height: 58%;" v-if="parameter.Type == 4" src="../../static/HOME/fachewei.png" mode="aspectFit"></image>
-				<image class="im_image" v-if="parameter.Type == 3" src="../static/baobanji.png" mode="aspectFit"></image>
-				<image class="im_image" v-if="parameter.Type == 2" src="../../static/HOME/pindanji.png" mode="aspectFit"></image>
-				<image class="im_image" v-if="parameter.Type == 1" src="../static/shoupiaoji.png" mode="aspectFit"></image>
-				<image class="im_image" style="height: 70%;" v-if="parameter.Type == 0" src="../../static/HOME/jianpiaoji.png" mode="aspectFit"></image>
+
 			</view>
 
 			<view class="ol_equipmentStatus">
 				<text class="es_text animated">设备状态</text>
-				<text class="es_text2" v-if="parameter.State==0">硬件状态未定义</text>
-				<text class="es_text2" v-if="parameter.State==1">硬件在线</text>
-				<text class="es_text2" v-if="parameter.State==2">硬件疑似离线</text>
-				<text class="es_text2" v-if="parameter.State==5">硬件下班关机</text>
-				<text class="es_text3 animated flash" v-if="parameter.State==3 ||parameter.State==4">硬件异常</text>
-				<text class="es_text2" v-if="parameter.State==0">软件状态未定义</text>
-				<text class="es_text2" v-if="parameter.State==1">软件在线</text>
-				<text class="es_text2" v-if="parameter.State==2">软件疑似离线</text>
-				<text class="es_text2" v-if="parameter.State==5">软件下班关机</text>
-				<text class="es_text3 animated flash" v-if="parameter.State ==3||parameter.State ==4">软件异常</text>
+				<text class="es_text2" v-if="parameter.Device.State==0">硬件状态未定义</text>
+				<text class="es_text2" v-if="parameter.Device.State==1">硬件在线</text>
+				<text class="es_text2" v-if="parameter.Device.State==2">硬件疑似离线</text>
+				<text class="es_text2" v-if="parameter.Device.State==5">硬件下班关机</text>
+				<text class="es_text3 animated flash" v-if="parameter.Device.State==3 ||parameter.Device.State==4">硬件异常</text>
+				<text class="es_text2" v-if="parameter.Device.State==0">软件状态未定义</text>
+				<text class="es_text2" v-if="parameter.Device.State==1">软件在线</text>
+				<text class="es_text2" v-if="parameter.Device.State==2">软件疑似离线</text>
+				<text class="es_text2" v-if="parameter.Device.State==5">软件下班关机</text>
+				<text class="es_text3 animated flash" v-if="parameter.Device.State ==3||parameter.Device.State ==4">软件异常</text>
 			</view>
 
 			<view class="ol_networkStatus">
-				<text class="ns_text">网络状态</text>
-				<!-- <text class="ns_text2" v-if="parameter.Online==true">外网正常</text>
-				<text class="ns_text3" v-if="parameter.Online==false">外网异常</text> -->
-				<text class="ns_text2" >{{DeviceState[parameter.State].state}}</text>
-				<!-- <text class="ns_text3 animated flash" v-if="parameter.Online==false">内网异常</text> -->
+				<text class="ns_text" >网络状态</text>
+				
+				<text class="ns_text2" >{{DeviceState[parameter.Device.State].state}}</text>
+				
 			</view>
 
-			<view class="ol_ticketSalesAmount" v-if="parameter.Type == 0 || parameter.Type == 1 || parameter.Type == 2">
+			<view class="ol_ticketSalesAmount" v-if="parameter.Device.Type == 0 || parameter.Device.Type == 1 || parameter.Device.Type == 2">
 				<text class="tsa_text">{{emptyTicketReset(ticketSum)}}/{{emptyTicketReset(moneySum)}}</text>
-				<!-- <text class="tsa_text animated flash" >---/---</text> -->
+				
 				<view style="display: flex;">
 					<image class="tsa_icon" src="../static/shoupiao.png" mode="aspectFit"></image>
-					<text class="tsa_text2" v-if="parameter.Type == 2">开单数/金额</text>
-					<text class="tsa_text2" v-if="parameter.Type == 1">售票数/金额</text>
-					<text class="tsa_text2" v-if="parameter.Type == 0">检票数/金额</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 4">开单数/金额</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 2">售票数/金额</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 3">检票数/金额</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 6 ||parameter.Device.Type == 7">识别数</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 5">报班数</text>
 				</view>
 			</view>
 
-			<view class="ol_ticketSalesAmount" v-if="parameter.Type == 3 || parameter.Type == 4 || parameter.Type == 5">
-				<text class="tsa_text" v-if="parameter.Online==true">{{emptyTicketReset(ticketSum)}}</text>
-				<text class="tsa_text animated flash" v-if="parameter.Online==false">---</text>
+			<view class="ol_ticketSalesAmount" v-if="parameter.Device.Type == 3 || parameter.Device.Type == 4 || parameter.Device.Type == 5">
+				<text class="tsa_text" >{{emptyTicketReset(ticketSum)}}</text>
+				
 				<view style="display: flex;">
 					<image class="tsa_icon" src="../static/shoupiao.png" mode="aspectFit"></image>
-					<text class="tsa_text2" v-if="parameter.Type == 3">班次数</text>
-					<text class="tsa_text2" style="margin-left: 4upx;" v-if="parameter.Type == 4">发车数</text>
-					<text class="tsa_text2" v-if="parameter.Type == 5">报班数</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 3">班次数</text>
+					<text class="tsa_text2" style="margin-left: 4upx;" v-if="parameter.Device.Type == 4">发车数</text>
+					<text class="tsa_text2" v-if="parameter.Device.Type == 5">报班数</text>
 				</view>
 			</view>
 
 			<view class="ol_cpuConsumption">
-				<!-- <text class="cc_text" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text> -->
+				
 				<text class="cc_text animated flash">---</text>
 				<view style="display: flex;">
 					<image class="cc_icon" src="../static/neicun.png" mode="aspectFit"></image>
@@ -66,7 +68,7 @@
 			</view>
 
 			<view class="ol_cpuTemperature">
-				<!-- <text class="ct_text" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text> -->
+			
 				<text class="ct_text animated flash">---</text>
 				<view style="display: flex;">
 					<image class="ct_icon" style="" src="../static/cpu.png" mode="aspectFit"></image>
@@ -109,9 +111,9 @@
 					<image class="sd_icon" style="width: 30upx;" src="../static/zijian.png" mode="aspectFit"></image>
 					<text class="sd_text">查看进程</text>
 				</view>
-				<view class="ol_shutDown" hover-class="ol_hover" style="margin-bottom: 56upx;" @click="notYetOpen()">
+				<view class="ol_shutDown" hover-class="ol_hover" style="margin-bottom: 56upx;" @click="checkLogin()">
 					<image class="sd_icon" style="width: 30upx;" src="../static/dengji.png" mode="aspectFit"></image>
-					<text class="sd_text">保修登记</text>
+					<text class="sd_text">报修登记</text>
 				</view>
 				<!-- <view class="ol_register"></view> -->
 			</view>
@@ -129,62 +131,62 @@
 				<scroll-view class="noticeBox2" scroll-y="ture">
 					<view class="tv_title">
 						<view class="tl_content">
-							<text class="ct_text">设备年限</text>
-							<text class="ct_text2" v-if="parameter.Online==true">5</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<text class="ct_text">使用年限</text>
+							<text class="ct_text2">{{parameter.Device.DevicePD}}</text>
+							
 						</view>
-						<view class="tl_content">
+						<!-- <view class="tl_content">
 							<text class="ct_text">开机时间</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{parameter.OpenTime}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
-						</view>
+							<text class="ct_text2" >{{parameter.Device.StateOpenTime}}</text>
+							<text class="ct_text2 animated flash">--</text>
+						</view> -->
 						<view class="tl_content">
 							<text class="ct_text">掉线时长</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{parameter.OnlineTime}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<text class="ct_text2" >{{parameter.OffLineDetail[0].OfflineMinutes}}分钟</text>
+							
 						</view>
-						<view class="tl_content" :hidden="parameter.Type == 3 || parameter.Type == 4 || parameter.Type == 5">
-							<text class="ct_text" v-if="parameter.Type == 2">开单数量</text>
-							<text class="ct_text" v-if="parameter.Type == 1">售票数量</text>
-							<text class="ct_text" v-if="parameter.Type == 0">检票数量</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{emptyTicketReset(ticketSum)}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+						<view class="tl_content" :hidden="parameter.Device.Type == 3 || parameter.Device.Type == 4 || parameter.Device.Type == 5">
+							<text class="ct_text" v-if="parameter.Device.Type == 4">开单数量</text>
+							<text class="ct_text" v-if="parameter.Device.Type == 2">售票数量</text>
+							<text class="ct_text" v-if="parameter.Device.Type == 3">检票数量</text>
+							<text class="ct_text2" >{{emptyTicketReset(ticketSum)}}</text>
+							
 						</view>
-						<view class="tl_content" :hidden="parameter.Type == 3 || parameter.Type == 4 || parameter.Type == 5">
-							<text class="ct_text" v-if="parameter.Type == 2">开单金额</text>
-							<text class="ct_text" v-if="parameter.Type == 1">售票金额</text>
-							<text class="ct_text" v-if="parameter.Type == 0">检票金额</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{emptyTicketReset(moneySum)}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+						<view class="tl_content" :hidden="parameter.Device.Type == 3 || parameter.Device.Type == 4 || parameter.Device.Type == 5">
+							<text class="ct_text" v-if="parameter.Device.Type == 4">开单金额</text>
+							<text class="ct_text" v-if="parameter.Device.Type == 2">售票金额</text>
+							<text class="ct_text" v-if="parameter.Device.Type == 3">检票金额</text>
+							<text class="ct_text2" >{{emptyTicketReset(moneySum)}}</text>
+							
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">掉线次数</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{parameter.BreakNum}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<text class="ct_text2" >{{parameter.breaktimes}}次</text>
+							
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">维修次数</text>
-							<text class="ct_text2" v-if="parameter.Online==true">{{frequency}}</text>
-							<text class="ct_text2 animated flash" v-if="parameter.Online==false">--</text>
+							<text class="ct_text2" >{{frequency}}</text>
+							
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">设备状态</text>
-							<text class="ct_text2" style="color: #3CB96B;" >{{DeviceState[parameter.State].state}}</text>
-							<!-- <text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">离线</text> -->
+							<text class="ct_text2" style="color: #3CB96B;">{{DeviceState[parameter.Device.State].state}}</text>
+							
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">网络状态</text>
-							<text class="ct_text2" style="color: #3CB96B;" >{{DeviceState[parameter.State].state}}</text>
-							<!-- <text class="ct_text2 animated flash" style="color: #FF6969;" v-if="parameter.Online==false">异常</text> -->
+							<text class="ct_text2" style="color: #3CB96B;">{{DeviceState[parameter.Device.State].state}}</text>
+						
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">CPU占用率</text>
-							<!-- <text class="ct_text2" v-if="parameter.Online==true">{{shareConversion(cpuProportion)}}</text> -->
+							<!-- <text class="ct_text2" >{{shareConversion(cpuProportion)}}</text> -->
 							<text class="ct_text2 animated flash">--</text>
 						</view>
 						<view class="tl_content">
 							<text class="ct_text">可用内存</text>
-							<!-- <text class="ct_text2" v-if="parameter.Online==true">{{memoryConversion(freeMemory)}}</text> -->
+							<!-- <text class="ct_text2" >{{memoryConversion(freeMemory)}}</text> -->
 							<text class="ct_text2 animated flash">--</text>
 						</view>
 					</view>
@@ -192,24 +194,7 @@
 			</view>
 		</popup>
 
-		<!-- 查看须知popup -->
-		<popup ref="popup2" type="bottom">
-			<view class="boxView2">
-				<view class="titleView2">
-					<text class="Nb_text3">运行进程</text>
-					<text class="Nb_text4 jdticon icon-fork" @click="close(2)"></text>
-				</view>
-				<scroll-view class="noticeBox2" scroll-y="ture">
-					<view class="tv_title">
-						<view class="tl_content" style="display: flex;" v-for="(item,index) in parameter.t" :key="index">
-							<text class="ct_text3">{{item.MainWindowTitle}}{{'('+item.ProgressName+')'}}</text>
-							<text class="ct_text4">{{timestampConversion(item.StartTime)}}</text>
-							<!-- <text class="ct_text4" v-if="parameter.Online==false">--</text> -->
-						</view>
-					</view>
-				</scroll-view>
-			</view>
-		</popup>
+		
 	</view>
 </template>
 
@@ -224,6 +209,7 @@
 		},
 		data() {
 			return {
+				
 				equipmentStatus: 0,
 				networkStatus: 0,
 				sellTicket: 177,
@@ -238,15 +224,15 @@
 				},
 				DeviceState: [{
 					"state": "未定义",
-				},{
+				}, {
 					"state": "在线"
-				},{
+				}, {
 					"state": "疑似离线"
-				},{
+				}, {
 					"state": "短时离线"
-				},{
+				}, {
 					"state": "长时离线"
-				},{
+				}, {
 					"state": "下班关机"
 				}],
 				lineData2: {
@@ -277,6 +263,7 @@
 			}
 		},
 		onLoad: function() {
+			
 			this.RequestDeviceParameters();
 		},
 		onUnload: function() {
@@ -298,17 +285,22 @@
 						console.log('设备参数', res)
 						this.parameter = '';
 						this.parameter = res.data[0];
+						if(this.parameter.Device.DevicePD!='未知')
+						{
+							this.parameter.Device.DevicePD=this.dateDiff(this.parameter.Device.PDtime.substring(0,10));
+						}
+						
 						this.titleData();
 						that.lineData2.categories = []; //清空X轴数据
 						this.lineData2.series = []; //清空Y轴数据
-						console.log(that.parameter.AID);
+						
 						//请求设备售出的票数接口
 						uni.request({
 							url: $Sbjg.SbjgInterface.GetBySettingAID.Url,
 							method: $Sbjg.SbjgInterface.GetBySettingAID.method,
 							header: $Sbjg.SbjgInterface.GetBySettingAID.header,
 							data: {
-								AID: that.parameter.AID,
+								AID: that.parameter.Device.AID,
 							},
 							success: (res) => {
 								console.log('设备售票', res)
@@ -322,14 +314,13 @@
 										name: '',
 										data: [],
 									}
-
-									if (that.parameter.Type == 3) {
+									if (that.parameter.Device.Type == 3) {
 										ticketSales.name = '检票数';
-									} else if (that.parameter.Type == 2) {
+									} else if (that.parameter.Device.Type == 2) {
 										ticketSales.name = '售票数';
-									} else if (that.parameter.Type == 4) {
+									} else if (that.parameter.Device.Type == 4) {
 										ticketSales.name = '开单数';
-									} else if (that.parameter.Type == 5) {
+									} else if (that.parameter.Device.Type == 5) {
 										ticketSales.name = '报班数';
 									}
 
@@ -337,6 +328,9 @@
 									for (var i = 0; i < res.data.length; i++) {
 										//重组时段
 										var a = res.data[i].Hour;
+										if (a < 5 || a > 21) {
+											continue;
+										}
 										that.lineData2.categories.push(a + '时')
 										// console.log(that.lineData2.categories) 
 
@@ -375,7 +369,7 @@
 						// 		method: $Sbjg.SbjgInterface.GetAllCpu.method,
 						// 		header: $Sbjg.SbjgInterface.GetAllCpu.header,
 						// 		data: {
-						// 			AID: that.parameter.AID,
+						// 			AID: that.parameter.Device.StateAID,
 						// 			// AID: '2020-08-17-46621d8a-4e64-4b78-bb05-ae24a89342a9',
 						// 		},
 						// 		success: (res) => {
@@ -455,12 +449,42 @@
 				})
 
 			},
-
-
+            //--------------------计算设备年限--------------------------
+			dateDiff: function(targetDate) {
+				console.log(targetDate)
+				
+				
+				let date1 = new Date();
+				let date2 = new Date(targetDate);
+				date1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+				date2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+				console.log(date1,date2)
+				const diff = date1.getTime() - date2.getTime(); //目标时间减去当前时间
+				var diffDate = diff / (24 * 60 * 60 * 1000);
+				
+				if(diffDate>30){
+					if(diffDate>365){
+						if(diffDate%365>30){
+							diffDate= Math.floor(diffDate/365)  +'年' +Math.floor(diffDate%365/30)  +'月' + diffDate%30+'天';
+						}
+						else{
+							diffDate=Math.floor(diffDate/365)  +'年' +diffDate%365+'天';
+						}
+					}
+					else{
+						diffDate= Math.floor(diffDate/30) +'月' +diffDate%30+'天';
+					}
+				}
+				else{
+					diffDate=diff+'天';
+				}
+				console.log(diffDate)
+				return diffDate;
+			},
 			//--------------------开头标题--------------------------
 			titleData: function() {
 				uni.setNavigationBarTitle({
-					title: this.parameter.CustomName
+					title: this.parameter.Device.StateCustomName
 				})
 			},
 
@@ -486,7 +510,7 @@
 					success: (res) => {
 						console.log(res)
 						if (res.confirm == true) {
-							console.log(this.parameter.AID)
+							console.log(this.parameter.Device.AID)
 							uni.showLoading({
 								title: '正在请求关机'
 							})
@@ -495,7 +519,7 @@
 								method: $Sbjg.SbjgInterface.GetCommndAdd.method,
 								header: $Sbjg.SbjgInterface.GetCommndAdd.header,
 								data: {
-									SettingAID: this.parameter.AID,
+									SettingAID: this.parameter.Device.AID,
 									Msg: '关机',
 								},
 								success: (res) => {
@@ -536,7 +560,7 @@
 					success: (res) => {
 						console.log(res)
 						if (res.confirm == true) {
-							console.log(this.parameter.AID)
+							console.log(this.parameter.Device.AID)
 							uni.showLoading({
 								title: '正在请求重启'
 							})
@@ -545,7 +569,7 @@
 								method: $Sbjg.SbjgInterface.GetCommndAdd.method,
 								header: $Sbjg.SbjgInterface.GetCommndAdd.header,
 								data: {
-									SettingAID: this.parameter.AID,
+									SettingAID: this.parameter.Device.AID,
 									Msg: '重启',
 								},
 								success: (res) => {
@@ -587,13 +611,38 @@
 					icon: 'none'
 				})
 			},
-
+            //------------------------跳转报修表----------------------------
 			guarantee: function() {
+				console.log(this.parameter)
 				uni.navigateTo({
-					url: './complaint?AID=' + this.parameter.AID + '&Remark=' + this.parameter.Remark + '&Code=' + this.parameter.Code
+					url: './complaint?AID=' + this.parameter.Device.AID + '&Remark=' + this.parameter.Device.CustomName +'&CompanyCode=' + this.parameter.Device.CompanyCode+'&Type=' + this.parameter.Device.Type
 				})
 			},
-
+//----------------------------检查是否登录-------------------------------
+				checkLogin: function(){
+					let that =this;
+					uni.getStorage({
+						key:'userInfo',
+						success:function(){
+							that.guarantee();
+						},
+						fail() {
+							uni.showToast({
+								title:'暂未登录，即将跳转登录',
+								icon:'none'
+							})
+							
+								setTimeout(function() {
+									uni.navigateTo({
+										url: '/pages/GRZX/appLogin',
+									})
+								}, 500);
+							
+						}
+						
+					})
+					
+				},
 			//售票参数重置
 			emptyTicketReset: function(e) {
 				if (e == '') {

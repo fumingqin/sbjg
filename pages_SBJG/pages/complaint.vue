@@ -5,7 +5,7 @@
 			<view class="top-text">
 				设备名称
 			</view>
-			<view class="tx_text">{{Remark}} - {{Code}}</view>
+			<view class="tx_text">{{Remark}}</view>
 			<!-- <view class="business-type">
 				<radio-group @change="radioChange">
 					<view v-for="(item,index) in types" :key="item.value">
@@ -65,6 +65,34 @@
 			<view class="top-view-bottomtext">
 				{{textmarn}}/500字
 			</view>
+			<!-- <view>
+				<view class="top-text">
+					添加图片
+				</view>
+				<view class="problem-textare-view">
+					<view class="problem-text">
+						图片能更直观地表达及排查故障所在（最多四张）
+					</view>
+					</view>
+				<scroll-view scroll-x="true" >
+					<block v-for="(item,index) in imageList" :key="index">
+					<image style="width: 122upx;height: 122upx;" :src="item"></image>
+					</block>
+					<image style="width: 122upx;height: 122upx;" src="../static/tianjia.png" @tap="chooseImage()"></image>
+					</scroll-view>
+				
+			</view> -->
+		</view>
+		
+		<view class="bottom-view">
+					<view class="bottom-view-text">
+						上传图片（选填）
+					</view>
+					<view class="bottom-view-ImageUpload">
+						<robby-image-upload v-model="detailInfo.imageData" :server-url-delete-image="serverUrlDeleteImage"
+						 :showUploadProgress="show" :form-data="formData" @delete="deleteImage" @add="addImage" :enable-del="enableDel"
+						 :enable-add="enableAdd" limit="3"></robby-image-upload>
+					</view>
 		</view>
 		<!-- 提交 -->
 		<view v-if="!btncheck" class="btnClass changecolor1" hover-class="hover" @click="successClick2">提交</view>
@@ -74,9 +102,12 @@
 
 <script>
 	import $Sbjg from "@/common/sbjg.js"
+	import { pathToBase64, base64ToPath } from '../components/js_sdk/gsq-image-tools/image-tools/index.js';
+	import robbyImageUpload from '../components/robby-image-upload/robby-image-upload.vue';
 	export default {
 		data() {
 			return {
+				imageList:[],
 				complaintInfo:'',
 				choice:'出租车',
 				openType1:false,//默认不开启列表
@@ -84,6 +115,21 @@
 				current:0,
 				textmarn:0,//字数
 				btncheck:false,//默认提交按钮样式
+				// 上传图片
+								enableDel: true, //是否启动del
+								enableAdd: true, //是否启动删除
+								enableDrag: false, //是否启动拖动
+								show: true, //是否显示
+								serverUrl: 'http://localhost:2000/work/uploadWorkPicture', //模拟服务器地址
+								serverUrlDeleteImage: 'http://localhost:2000/work/deleteWorkPicture', //模拟服务器删除
+								formData: { //表格数据
+									userId: 2
+								},
+								imagelist: [], //图像列表框
+								detailInfo: { //详细信息
+									imageData: [], //图像日期	
+								},
+								img:[],
 				types: [{
 						value: 'Traditional',
 						name: '传统客运',
@@ -165,13 +211,43 @@
 				Remark:'',
 				Code:'',
 				datestring:'',
+				companycode:'',
+				Devicetype:'',
+				phone:''
 			}
 		},
+				components: {
+					robbyImageUpload, // 导入图片上传
+				},
 		onLoad(param) {
 			this.AID = param.AID;
 			this.Remark = param.Remark;
-			this.Code = param.Code;
-			this.currentTime();
+			this.Devicetype= param.Type;
+			this.companycode=param.CompanyCode;
+			console.log(param);
+			uni.getStorage({
+				key:'phone',
+				success: (res) =>{
+					this.phone=res.data.phone;
+					//console.log(res.data);
+					//console.log(this.companycode);
+					//console.log(this.datestring);
+					//console.log(this.textmarn);
+					console.log(this.phone);
+				},
+				fail() {
+					uni.showToast({
+						title:'暂未登录，即将跳转登录',
+						icon:'none'
+					})
+					
+						setTimeout(function() {
+							uni.navigateTo({
+								url: '/pages/GRZX/appLogin',
+							})
+						}, 500);
+				}
+			})
 		},
 		methods: {
 			openList:function(e){
@@ -191,6 +267,26 @@
 					this.openType2=true;
 					}
 			},
+			deleteImage: function(e){
+							console.log(e)
+								var index = this.imageList.findIndex(item => {
+									for(var i=0;i<e.allImages.length;i++){
+								    if (item ==this.Typetext[i].text) {
+											return true;
+											}
+										}
+									})
+								this.imageList.splice(index,1);
+						},
+						addImage: function(e){
+							console.log(e)
+							for(var i=0;i<e.allImages.length;i++){
+								pathToBase64(e.allImages[i])
+								.then(base64 => {
+									this.imageList.push(base64);
+								})
+							}
+						},
 			closeList:function(e){
 				if(e==1)
 				{
@@ -282,63 +378,93 @@
 				var date = new Date();
 				var year = date.getFullYear();
 				var month = date.getMonth() + 1;
-				var day = date.getDate() + 2;
+				var day = date.getDate();
 				var hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
 				var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
 				month >= 1 && month <= 9 ? (month = "0" + month) : "";
 				day >= 0 && day <= 9 ? (day = "0" + day) : "";
-				var timer = year + '-' + month + '-' + day; //当前年月日时分
+				var timer = year + '-' + month + '-' + day+' '+hour+':'+minutes; //当前年月日时分
 				this.datestring = timer; //截取日期
 				console.log('获取当前时间',this.datestring)
 			},
+			chooseImage:function(){
+				let that=this;
+				uni.chooseImage({
+				    count: 4, //默认9
+				    sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+				    sourceType: ['album'], //从相册选择
+				    success: function (res) {
+						that.imageList=res.tempFilePaths;
+				        that.urlTobase64(res.tempFilePaths[0])
+				    }
+				});
+			},
 			
+			 
+			urlTobase64(url){
+			    uni.request({
+				url: url,
+				method:'GET',
+				responseType: 'arraybuffer',
+				success: ress => {
+					let base64 = wx.arrayBufferToBase64(ress.data); //把arraybuffer转成base64 
+					base64 = 'data:image/jpeg;base64,' + base64 //不加上这串字符，在页面无法显示的哦
+					//console.log(base64)
+				},
+				fail:res =>{
+					console.log(e)
+				}
+			    })
+			}, 
+		
 			//------------------------提交数据----------------------------
 			successClick:function(){
+				
+				this.currentTime(),
+				console.log(this.complaintInfo)
+				
 				uni.showLoading({
 					title:'提交中...'
 				})
+				this.AddBook();
+			},
+			AddBook:function(){
 				uni.request({
-					url: $Sbjg.SbjgInterface.AddStateBy.Url,
-					method: $Sbjg.SbjgInterface.AddStateBy.method,
-					header: $Sbjg.SbjgInterface.AddStateBy.header,
-					data: {
-						SettingAID: this.AID,
-						OperationTime: this.datestring,
-						// OperationUser: ,
-						// State: ,
-						// Repairer:,
-						Remark:this.complaintInfo
-					},
-					success: (res) => {
-						console.log(res)
-						if (res.data.status== true) {
-							uni.hideLoading()
-							uni.showToast({
-								title:'报修成功',
-								icon: 'success',
-							})
-							if(that.Remark==''){
-								setTimeout(function(){
-									uni.navigateBack();
-								},2000);
-							}
-						} else {
-							uni.hideLoading()
-							uni.showToast({
-								title:'报修失败，服务器异常',
-								icon: 'none',
-							})
-						}
-				
-					},
-					fail: () => {
-						uni.hideLoading()
-						uni.showToast({
-							title:'网络异常，请重试',
-							icon:'none'
-						})
-					}
-				})
+									url: $Sbjg.SbjgInterface.AddStateBy.Url,
+									method: $Sbjg.SbjgInterface.AddStateBy.method,
+									header: $Sbjg.SbjgInterface.AddStateBy.header,
+									data: {
+										type:1,
+										reportname:'lin', 
+										companycode:this.companycode,
+										devicetype:this.Devicetype, 
+										deviceid:this.AID,
+										phonenumber:this.phone,
+										lasttime:this.datestring,
+										details:this.complaintInfo,
+										//byte:this.imageList
+									},
+									success: (res) => {
+										console.log(res)
+										if (res.data== "提交成功") {
+											uni.hideLoading()
+											uni.showToast({
+												title:'报修成功',
+												icon: 'success',
+											})
+											setTimeout(function(){
+												uni.navigateBack();
+											},1000);
+										} 
+									},
+									fail: () => {
+										uni.hideLoading()
+										uni.showToast({
+											title:'网络异常，请重试',
+											icon:'none'
+										})
+									}
+								})
 			}
 		}
 	}
@@ -513,5 +639,19 @@
 		color: #FFFFFF;
 		background: #5694fb;
 	}
+	.bottom-view {
+			width: 694upx;
+			height: 339upx;
+			background-color: #FFFFFF;
+			border-radius: 20upx;
+			margin: 0upx 20upx 28upx 28upx;
 	
+			.bottom-view-text {
+				font-size: 34upx;
+				color: #333333;
+				margin-left: 28upx;
+				padding-top: 43upx;
+				font-weight: 500;
+			}
+		}
 </style>
