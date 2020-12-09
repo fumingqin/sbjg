@@ -68,7 +68,11 @@
                 ,{
                     "path" : "pages/complaintList",
                     "style" : {}
-                }
+                },
+				{
+				    "path" : "pages/faultDetail",
+				    "style" : {}
+				}
             ]
 		}
 	],
