@@ -442,6 +442,8 @@
 										phonenumber:this.phone,
 										lasttime:this.datestring,
 										details:this.complaintInfo,
+										customname:this.Remark,
+										
 										//byte:this.imageList
 									},
 									success: (res) => {

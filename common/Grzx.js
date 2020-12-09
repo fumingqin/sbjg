@@ -92,6 +92,7 @@ const Interface={
 	 	method:'POST',
 	 	header: {'content-type': 'application/json'},
 	 },
+
 }
 
 export default {

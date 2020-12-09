@@ -115,7 +115,14 @@ const SbjgInterface = {
 		name:'上传报修进度',
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
-	}
+	},
+	//--------------------------------------获取所有维修订单--------------------------------------
+	GetBook:{
+		Url: Url2 + '/Home/GetBook',
+		name:'获取所有维修订单',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
 }
 // 接口声明区
 export default {
