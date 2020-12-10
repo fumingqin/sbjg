@@ -123,6 +123,13 @@ const SbjgInterface = {
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},
+	//--------------------------------------在线状态报表--------------------------------------
+	GetOnlineState:{
+		Url: Url2 + '/Home/GetOnlineState',
+		name:'在线状态报表',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
 }
 // 接口声明区
 export default {

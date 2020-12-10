@@ -167,6 +167,7 @@
 					header: $Sbjg.SbjgInterface.GetBook.header,
 					data: {},
 					success: (res) => {
+						console.log(res);
 						this.complaintList = res.data;
 						var item1 = this.complaintList.filter(item => {
 							return item.State == 1;

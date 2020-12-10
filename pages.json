@@ -72,6 +72,10 @@
 				{
 				    "path" : "pages/faultDetail",
 				    "style" : {}
+				},
+				{
+				    "path" : "pages/olStatusReport",
+				    "style" : {}
 				}
             ]
 		}
