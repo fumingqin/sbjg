@@ -8,23 +8,32 @@
 				<uni-steps :options="options" direction="column" :active='active'></uni-steps>
 			</view>
 		</view>
-		<!-- <view class="type">
+		<view class="type">
 			<view class="top-text">
 				类别
 			</view>
 			<view class="type-text">
-				包车
-			</view>
-		</view> -->
-		<!-- <view class="complaintinfo">
-			<view class="top-text">
-				投诉内容
-			</view>
-			<view class="complaintinfo-text">
-				用着不舒服，很卡～希望改善功能和用户体验，要不然用户会被吓跑，狠心卸载～多考虑一下用户的意见。
+				{{formate(list.Type)}}
 			</view>
 		</view>
-		<view class="backinfo" v-if="active==2">
+		<view class="complaintinfo">
+			<view class="top-text">
+				报修详细
+			</view>
+			<view class="complaintinfo-text">
+				{{list.Details}}
+			</view>
+		</view>
+
+		<view class="complaintinfo">
+			<view class="top-text">
+				报修图片
+			</view>
+			<view class="">
+				<image :src="photo" @tap="showimage(photo)" mode="widthFix" class="image"></image>
+			</view>
+		</view>
+		<!-- 		<view class="backinfo" v-if="active==2">
 			<view class="top-text">
 				回复内容 
 			</view>
@@ -36,11 +45,16 @@
 
 <script>
 	import uniSteps from '@/pages_SBJG/components/uni-steps/uni-steps.vue'
+	import {
+		pathToBase64,
+		base64ToPath
+	} from '../components/js_sdk/gsq-image-tools/image-tools/index.js';
 	export default {
 		data() {
 			return {
-				status:0,
+				status: 0,
 				active: 0,
+				photo: '',
 				options: [{
 						title: '已登记',
 					},
@@ -51,33 +65,82 @@
 						title: '保修结果',
 					}
 				],
-				list:'',
+				list: '',
 			}
 		},
 		components: {
 			uniSteps
 		},
-		onShow() {
+		onLoad() {
 			this.load();
 		},
 		methods: {
-			load(){
-				uni.getStorage({
-					key:'faultDetail',
-					success: (res) => {
-						this.list = res.data;
-						if(this.list.State == 1){
-							this.active = 0;
-						}else if(this.list.State == 2 || this.list.State == 3){
-							this.active = 1;
-						}else{
-							this.active = 2;
-							this.options[2].title = "已完成";
+			load() {
+				uni.showLoading({
+						title: '正在加载中...',
+						mask: true,
+					}),
+					uni.getStorage({
+						key: 'faultDetail',
+						success: (res) => {
+							var that = this;
+							that.list = res.data;
+							console.log(that.list.PhotoBase64)
+							if(that.list.PhotoBase64 !=null){
+							base64ToPath(that.list.PhotoBase64).then(path => {
+									that.photo = path;
+									console.log(that.photo)
+								})
+								.catch(error => {
+									console.error(error)
+								})};
+
+							if (this.list.State == 1) {
+								this.active = 0;
+							} else if (this.list.State == 2 || this.list.State == 3) {
+								this.active = 1;
+							} else {
+								this.active = 2;
+								this.options[2].title = "已完成";
+							}
+							uni.setNavigationBarTitle({
+								title: this.list.CustomName,
+							})
+							console.log(this.list);
+						},
+						complete: () => {
+							uni.hideLoading();
 						}
-						console.log(this.list);
-					}
-				})
+					})
 			},
+			formate: function(e) {
+				switch (e) {
+					case 0:
+						return '未定义';
+					case 1:
+						return '硬件故障';
+					case 2:
+						return '软件故障';
+					case 3:
+						return '主板故障';
+					case 4:
+						return '电源故障';
+					case 5:
+						return '屏幕故障';
+					case 6:
+						return '内存问题';
+				}
+			},
+			showimage:function(image) {
+							var imgArr = [];
+							imgArr.push(image);
+							//预览图片
+							uni.previewImage({
+								urls: imgArr,
+								current: imgArr[0]
+							});
+						},
+			 
 		}
 	}
 </script>
@@ -88,9 +151,9 @@
 	}
 
 	.progress {
-		width: 694upx;
-		height: 415upx;
-		margin: 30upx 20upx 28upx 28upx;
+		width: 90%;
+		margin-left: 5%;
+		margin-top: 5%;
 		background-color: #FFFFFF;
 		border-radius: 20upx;
 	}
@@ -103,23 +166,23 @@
 	.top-text {
 		font-size: 34upx;
 		color: #333333;
-		margin-left: 30upx;
-		padding-top: 25upx;
+		margin-left: 5%;
+		padding-top: 2%;
 		font-weight: 551;
 	}
 
 	.type {
-		width: 694upx;
-		height: 169upx;
-		margin: 0upx 20upx 28upx 28upx;
+		width: 90%;
+		margin-left: 5%;
+		margin-top: 5%;
 		background-color: #FFFFFF;
 		border-radius: 20upx;
 	}
 
 	.complaintinfo {
-		width: 694upx;
-		height: 299upx;
-		margin: 0upx 20upx 28upx 28upx;
+		width: 90%;
+		margin-left: 5%;
+		margin-top: 5%;
 		background-color: #FFFFFF;
 		border-radius: 20upx;
 	}
@@ -135,19 +198,28 @@
 	.type-text {
 		font-size: 32upx;
 		color: #999999;
-		margin-left: 32upx;
-		margin-top: 20upx;
+		margin-left: 5%;
+		margin-top: 2%;
+		padding-bottom: 5%;
 	}
 
 	.complaintinfo-text {
 		font-size: 32upx;
-		color: #333333;
-		width: 632upx;
-		height: 142upx;
+		color: #999999;
+		width: 90%;
 		text-align: justify;
-		margin-left: 32upx;
-		margin-top: 30upx;
-		color: #606264;
+		margin-left: 5%;
+		margin-top: 1%;
+		padding-bottom: 4%;
+		/* 		color: #606264; */
 		line-height: 50upx;
+	}
+
+	.image {
+		height: 170rpx;
+		width: 170rpx;
+		margin-left: 5%;
+		margin-top: 2%;
+		margin-bottom: 2%;
 	}
 </style>

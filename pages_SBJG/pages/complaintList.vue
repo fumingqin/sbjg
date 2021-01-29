@@ -3,19 +3,19 @@
 		<!-- 顶部滑动 -->
 		<view class="screen">
 			<view class="screenView">
-				<view class="screenText" :class="{current:type===0}" @click="tabClick(0)">
+				<view class="screenText" :class="{current:type===1}" @click="tabClick(1)">
 					登记
 				</view>
-				<view class="screenText" :class="{current:type===1}" @click="tabClick(1)">
+				<view class="screenText" :class="{current:type===3}" @click="tabClick(3)">
 					进行中
 				</view>
-				<view class="screenText" :class="{current:type===2}" @click="tabClick(2)">
+				<view class="screenText" :class="{current:type===4}" @click="tabClick(4)">
 					已完成
 				</view>
 			</view>
 		</view>
 		<!-- 登记 -->
-		<view v-if="type==0">
+		<view v-if="type==1">
 			<!-- 暂无数据 -->
 			<view class="pd_image" v-if="!show1">
 				<view>
@@ -36,14 +36,22 @@
 					<text class="order_contentText">设备名称：{{item.CustomName}}</text>
 					<text class="order_contentText">报修时间：{{formatTime(item.ReportTime)}}</text>
 				</view>
-				<view class="order-bottom" @click="gotoStatus(item)">
+				<view v-if="!isadmin" class="success-order-bottom" @click="gotoStatus(item)">
 					详细
+				</view>
+				<view v-if="isadmin" style="display: flex;flex-direction: row; margin-left:50%">
+					<view class="order-bottom" @click="gotoStatus(item)">
+						详细
+					</view>
+					<view class="order-bottom" @click="changeStatus(item)" >
+						接单
+					</view>
 				</view>
 			</view>
 
 		</view>
 		<!-- 进行中 -->
-		<view v-if="type==1">
+		<view v-if="type==3">
 			<view class="pd_image" v-if="!show2">
 				<view>
 					<image class="im_image" src="../static/tslb.gif"></image>
@@ -61,15 +69,23 @@
 					<text class="order_contentText">报修人：{{item.ReportName}}</text>
 					<text class="order_contentText">手机号码：{{item.PhoneNumber}}</text>
 					<text class="order_contentText">设备名称：{{item.CustomName}}</text>
-					<text class="order_contentText">报修时间：{{formatTime(item.ReportTime)}}</text>
+					<text class="order_contentText">登记时间：{{formatTime(item.LastTime)}}</text>
 				</view>
-				<view class="order-bottom" @click="gotoStatus(item)">
+				<view v-if="!isadmin" class="success-order-bottom" @click="gotoStatus(item)">
 					详细
+				</view>
+				<view v-if="isadmin" style="display: flex;flex-direction: row; margin-left:50%">
+					<view class="order-bottom" @click="gotoStatus(item)">
+						详细
+					</view>
+					<view class="order-bottom" @click="changeStatus(item)" >
+						完成
+					</view>
 				</view>
 			</view>
 		</view>
 		<!-- 完成 -->
-		<view v-if="type==2">
+		<view v-if="type==4">
 			<view class="pd_image" v-if="!show3">
 				<view>
 					<image class="im_image" src="../static/tslb.gif"></image>
@@ -88,10 +104,18 @@
 					<text class="order_contentText">报修人：{{item.ReportName}}</text>
 					<text class="order_contentText">手机号码：{{item.PhoneNumber}}</text>
 					<text class="order_contentText">设备名称：{{item.CustomName}}</text>
-					<text class="order_contentText">报修时间：{{formatTime(item.ReportTime)}}</text>
+					<text class="order_contentText">完成时间：{{formatTime(item.LastTime)}}</text>
 				</view>
-				<view class="order-bottom" @click="gotoStatus(item)">
+				<view v-if="isadmin" class="success-order-bottom" @click="gotoStatus(item)">
 					详细
+				</view>
+				<view v-if="!isadmin" style="display: flex;flex-direction: row; margin-left:50%">
+					<view class="order-bottom" @click="gotoStatus(item)">
+						详细
+					</view>
+					<view class="order-bottom" @click="gotoStatus(item)" >
+						评价
+					</view>
 				</view>
 			</view>
 
@@ -106,17 +130,17 @@
 			return {
 				items: ['登记', '进行中', '已完成'],
 				current: 0,
-				type: 0, //默认审核中
+				type: 1, //默认审核中
 				show1: false, //判断是否有数据
 				show2: false, //判断是否有数据
 				show3: false, //判断是否有数据
-
+				isadmin:true,//判断是否为维修人员
 
 				complaintList: [],
 			}
 		},
-		onShow: function() {
-			this.GetBook(0);
+		onLoad: function() {
+			this.GetBook(1);
 		},
 		methods: {
 			// 顶部Tab
@@ -165,7 +189,9 @@
 					url: $Sbjg.SbjgInterface.GetBook.Url,
 					method: $Sbjg.SbjgInterface.GetBook.method,
 					header: $Sbjg.SbjgInterface.GetBook.header,
-					data: {},
+					data: {
+						state:e,
+					},
 					success: (res) => {
 						console.log(res);
 						this.complaintList = res.data;
@@ -201,6 +227,35 @@
 					url:'./faultDetail'
 				})
 			},
+			changeStatus:function(item){
+				console.log(item);
+				uni.showLoading({
+					title: '正在接单中...',
+					mask: true,
+				})
+				
+				uni.request({
+					url: $Sbjg.SbjgInterface.AddTask.Url,
+					method: $Sbjg.SbjgInterface.AddTask.method,
+					header: $Sbjg.SbjgInterface.AddTask.header,
+					data:{
+						companycode:item.CompanyCode,
+						deviceid:item.DeviceID,
+						devicetype:item.DeviceType,
+						devicename:item.CustomName,
+						bookid:item.AID,
+						reporttime:this.formatTime(item.ReportTime),
+						state:item.State,
+					},
+					success: (res) => {
+						console.log(this.type);
+						this.GetBook(this.type)
+					},
+					complete: () => {
+						uni.hideLoading();
+					}
+				})
+			}
 		}
 	}
 </script>
@@ -238,8 +293,6 @@
 				font-size: 30upx;
 				color: #333333;
 				position: relative;
-
-
 
 				&.current {
 					color: #00aaff;
@@ -347,7 +400,7 @@
 		width: 134upx;
 		text-align: center;
 		margin-top: 20upx;
-		margin-left: 75%;
+		margin-left: 5%;
 		color: #66686A;
 		font-size: 32upx;
 	}
@@ -359,5 +412,16 @@
 		padding: 16upx 0;
 		height: 108upx;
 		z-index: 99999;
+	}
+	.success-order-bottom{
+		border: 2upx solid #dddddd;
+		border-radius: 10upx;
+		padding: 15upx 0upx;
+		width: 134upx;
+		text-align: center;
+		margin-top: 20upx;
+		margin-left: 75%;
+		color: #66686A;
+		font-size: 32upx;
 	}
 </style>

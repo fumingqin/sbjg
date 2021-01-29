@@ -109,6 +109,7 @@ export default {
 		this.height = JSON.stringify(uni.getSystemInfoSync().screenHeight - 120)+'px';
 		console.log(this.height,"屏幕高度");
 		console.log(uni.getSystemInfoSync().screenHeight,"屏幕高度");
+		
 	},
 	onShow() {
 		//plus.screen.lockOrientation('landscape-primary');
@@ -214,7 +215,6 @@ export default {
 					return 7;
 				case '信息屏':
 					return 8;
-					
 				default:
 					return '';
 			}
@@ -234,7 +234,6 @@ export default {
 					return 'HuaWei';
 				case '安溪恒兴新车站':
 					return 'HengXing';
-					
 				default:
 					return '';
 			}
@@ -280,6 +279,11 @@ export default {
 					this.options[2].contents=['全部','在线','长时离线', '短时离线','疑似离线','下班关机'];
 				}
 				this.options[3].header = e.content;
+				if(e.content == '全部'){
+					this.online = false;
+				}else{
+					this.online = true;
+				}
 			}
 			console.log(this.company);
 			console.log(this.type);

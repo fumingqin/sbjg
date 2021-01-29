@@ -25,11 +25,27 @@
 				</view>
 			</view> -->
 		</view>
+		<view class="business-view">
+			<view class="top-text">
+				联系人
+			</view>
+		<input type="text" value="" class="tx_text" placeholder="请输入联系人" v-model="reportname" @input="inputname"/>
+		</view>
+		
+		<view class="business-view">
+			<view class="top-text3">
+				<text style="margin-left: 30rpx;margin-top: 5%;">手机号码</text>
+				<view style="margin-left: 46%;margin-top: 2%;">
+					<button style="font-size: 30upx;" @click="GetPhone">本机号码</button>
+				</view>
+			</view>
+		<input type="number" value="" class="tx_text" placeholder="请输入手机号码" v-model="phone" maxlength="11" @input="inputphone"/>
+		</view>
 		<!-- 问题选择 -->
 		<view class="problem-view">
 			<view class="top-text2">
 				<text style="font-weight: bold;">问题选择</text>
-				<text class="top-text-right">（可选三项）</text>
+				<text class="top-text-right">（单选）</text>
 			</view>
 			<view class="problem-text">
 				快速处理，精准分类
@@ -91,7 +107,7 @@
 					<view class="bottom-view-ImageUpload">
 						<robby-image-upload v-model="detailInfo.imageData" :server-url-delete-image="serverUrlDeleteImage"
 						 :showUploadProgress="show" :form-data="formData" @delete="deleteImage" @add="addImage" :enable-del="enableDel"
-						 :enable-add="enableAdd" limit="3"></robby-image-upload>
+						 :enable-add="enableAdd" limit="1"></robby-image-upload>
 					</view>
 		</view>
 		<!-- 提交 -->
@@ -109,10 +125,11 @@
 			return {
 				imageList:[],
 				complaintInfo:'',
-				choice:'出租车',
+				choice:'',
 				openType1:false,//默认不开启列表
 				openType2:false,//默认不开启列表
 				current:0,
+				locationID:'',//部署位置
 				textmarn:0,//字数
 				btncheck:false,//默认提交按钮样式
 				// 上传图片
@@ -213,7 +230,8 @@
 				datestring:'',
 				companycode:'',
 				Devicetype:'',
-				phone:''
+				phone:'',
+				reportname:''
 			}
 		},
 				components: {
@@ -226,9 +244,16 @@
 			this.companycode=param.CompanyCode;
 			console.log(param);
 			uni.getStorage({
+				key:'equipmentParameters',
+				success: (res) => {
+					this.locationID=res.data.Device.LocationID;
+					console.log(this.locationID);
+				}
+			})
+			uni.getStorage({
 				key:'phone',
 				success: (res) =>{
-					this.phone=res.data.phone;
+					//this.phone=res.data.phone;
 					//console.log(res.data);
 					//console.log(this.companycode);
 					//console.log(this.datestring);
@@ -327,14 +352,14 @@
 							{
 								if(!that.Typetext[i].check){
 									
-								}else if(that.typetext.length<3){
+								}else if(that.typetext.length<1){
 									that.Typetext[i].checked = true;
 									that.btncheck=true;
 									that.typetext.push(that.Typetext[i].text);
 								}else{
 									uni.showToast({
 										icon:'none',
-										title:'意见类型最多选中3个'
+										title:'意见类型最多选中1个'
 									})
 								}
 							}
@@ -361,6 +386,32 @@
 			Inputtext:function(e){
 				var that = this;
 				that.textmarn=e.detail.cursor; 
+			},
+			inputname:function(e)
+			{
+				this.reportname=e.detail.value;
+			},
+			inputphone:function(e)
+			{
+				this.phone=e.detail.value;
+			},
+			formate:function(e){
+				switch(e)
+				{
+					case '硬件故障':
+						return 1;
+					case '软件故障':
+						return 2;
+					case '主板故障':
+						return 3;
+					case '电源故障':
+						return 4;
+					case '屏幕故障':
+						return 5;
+					case '内存问题':
+						return 6;
+					
+				}
 			},
 			
 			//------------------------请选择问题----------------------------
@@ -399,7 +450,31 @@
 				    }
 				});
 			},
-			
+			GetPhone:function(){
+				uni.getStorage({
+					key:'phone',
+					success: (res) =>{
+						this.phone=res.data.phone;
+						//console.log(res.data);
+						//console.log(this.companycode);
+						//console.log(this.datestring);
+						//console.log(this.textmarn);
+						console.log(this.phone);
+					},
+					fail() {
+						uni.showToast({
+							title:'暂未登录，即将跳转登录',
+							icon:'none'
+						})
+						
+							setTimeout(function() {
+								uni.navigateTo({
+									url: '/pages/GRZX/appLogin',
+								})
+							}, 500);
+					}
+				})
+			},
 			 
 			urlTobase64(url){
 			    uni.request({
@@ -422,11 +497,13 @@
 				
 				this.currentTime(),
 				console.log(this.complaintInfo)
-				
-				uni.showLoading({
-					title:'提交中...'
-				})
-				this.AddBook();
+				console.log(this.phone)
+				console.log(this.reportname)
+				console.log(this.imageList[0])
+				// uni.showLoading({
+				// 	title:'提交中...'
+				// })
+				// this.AddBook();
 			},
 			AddBook:function(){
 				uni.request({
@@ -434,16 +511,17 @@
 									method: $Sbjg.SbjgInterface.AddStateBy.method,
 									header: $Sbjg.SbjgInterface.AddStateBy.header,
 									data: {
-										type:1,
-										reportname:'lin', 
+										type:this.formate(this.typetext[0]),
+										reportname:this.reportname, 
 										companycode:this.companycode,
+										locationid:this.locationID,
 										devicetype:this.Devicetype, 
 										deviceid:this.AID,
 										phonenumber:this.phone,
 										lasttime:this.datestring,
 										details:this.complaintInfo,
 										customname:this.Remark,
-										
+										photo:this.imageList[0],
 										//byte:this.imageList
 									},
 									success: (res) => {
@@ -656,4 +734,11 @@
 				font-weight: 500;
 			}
 		}
+	.top-text3{
+		display: flex;
+		flex-direction: row;
+		font-size: 34upx;
+		color: #333333;
+		font-weight: bold;
+	}
 </style>

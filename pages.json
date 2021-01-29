@@ -6,6 +6,12 @@
 				"navigationStyle": "custom"
 			}
 		},
+		{
+		    "path" : "pages/HOME/easyPage",
+		    "style" : {
+				"navigationStyle": "custom"
+			}
+		},
 
 		{	//个人中心
 			"path": "pages/HOME/homeSattionPick",
@@ -77,6 +83,14 @@
 				    "path" : "pages/olStatusReport",
 				    "style" : {}
 				}
+                ,{
+                    "path" : "pages/performance",
+                    "style" : {}
+                }
+                ,{
+                    "path" : "pages/repaircount",
+                    "style" : {}
+                }
             ]
 		}
 	],

@@ -1,11 +1,11 @@
 /* 接口参数区 */
-// 示例
+// 示例1
 import $oSit from '@/common/overallSituation.js'
 // const Url='http://zntc.145u.net';
 // const Url = 'https://zntc.145u.net:9099';//接口地址
 //const ddtUrl='http://111.231.109.113:8004' //达达通接口地址
 //const Url = 'https://zntc.145u.net:9098';//综合出行接口地址
-//const Url = 'http://zntc.145u.net'; //http请求
+//const Url = 'http://zntc.145u.net'; //http请求 
 
 //接口域名
 const Url=$oSit.Interface.address.Url;
@@ -35,7 +35,13 @@ const SbjgInterface = {
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},
-	
+	//--------------------------------------获取车站所有设备--------------------------------------
+	GetSerialsByLoctationId:{
+		Url: Url2 + '/Home/GetSerialsByLoctationId',
+		name:'获取车站所有设备',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
 	//--------------------------------------设备关机/重启--------------------------------------
 	GetCommndAdd:{
 		Url: Url2 + '/Home/GetCommndAdd',
@@ -127,6 +133,27 @@ const SbjgInterface = {
 	GetOnlineState:{
 		Url: Url2 + '/Home/GetOnlineState',
 		name:'在线状态报表',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//--------------------------------------添加维修单--------------------------------------
+	AddTask:{
+		Url: Url2 + '/Repair/AddTask',
+		name:'添加维修单',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//--------------------------------------获取工作业绩--------------------------------------
+	GetPerformance:{
+		Url: Url2 + '/Home/GetPerformance',
+		name:'获取工作业绩',
+		method:'POST',
+		header:{'content-type':'application/x-www-form-urlencoded'},
+	},
+	//--------------------------------------获取维修次数--------------------------------------
+	GetRepair:{
+		Url: Url2 + '/Home/GetRepair',
+		name:'获取维修次数',
 		method:'POST',
 		header:{'content-type':'application/x-www-form-urlencoded'},
 	},

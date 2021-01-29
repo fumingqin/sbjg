@@ -59,7 +59,8 @@ export function pathToBase64(path) {
                 filePath: path,
                 encoding: 'base64',
                 success: function(res) {
-                    resolve('data:image/png;base64,' + res.data)
+                    //resolve('data:image/png;base64,' + res.data)
+					resolve(res.data)
                 },
                 fail: function(error) {
                     reject(error)
